@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>All products</h1>
+    <div id="info">
+        
+    </div>
+    <script>
+        const container = document.getElementById("info");
+        let results;
+        function getProducts(){
+            container.innerHTML = '';
+            fetch('http://localhost:3000/allProducts')
+            .then((res)=> res.json())
+            .then((data)=> {
+                results = data.results;
+                data.results.forEach(e => {
+                    container.innerHTML += `
+                    <h3>${e.prodName}</h3>
+            	    <p>${e.id}</p>
+                    <button onclick="storeItem(this.id)" id="${e.id}"> <a href="/singleProduct">Click Me to view the item! </a></button>
+                    `
+                });
+            });
+        }
+        function storeItem(id){
+            localStorage.setItem("singleItem",JSON.stringify(results[id-1]));
+            console.log(JSON.parse(localStorage.getItem("singleItem")));
+        }
+        getProducts();
+    </script>
+</body>
+</html>

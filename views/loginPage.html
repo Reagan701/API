@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Login</h1>
+
+    <form id="loginForm" method="post" onsubmit="sendData(event)">
+        <div>
+            <label for="email"> Email </label>
+            <input id="email" type="email" required>
+        </div>
+        <div>
+            <label for="password">Enter Password</label>
+            <input id="password" type="text" required>
+        </div>
+        <div>
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+
+    <script>
+        function sendData(e){
+            e.preventDefault();
+            const enteredEmail = document.getElementById("email").value;
+            const enteredPassword = document.getElementById("password").value;
+            fetch("http://localhost:3000/loginUser", {
+                method:"POST",
+                body: JSON.stringify({
+                    email: enteredEmail,
+                    userpassword: enteredPassword
+                }),
+                headers:{
+                    "Content-type" : "application/json; charset=UTF-8",
+                },
+            })
+            .then((res) => res.json())
+            .then((data) => console.log(data.results));
+        }
+    </script>
+</body>
+</html>
