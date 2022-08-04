@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+</head>
+<body>
+    <h1>Register</h1>
+    <div>
+        <form method="POST" onsubmit="sendData(event)">
+            <div>
+                <label for="firstname">Enter first name</label>
+                <input id="firstname" name="firstname" type="text">
+            </div>
+            <div>
+                <label for="lastname">Enter last name</label>
+                <input id="lastname" name="lastname" type="text">
+            </div>
+            <div>
+                <label for="gender">Enter gender</label>
+                <input id="gender" name="gender" type="text">
+            </div>
+            <div>
+                <label for="address">Enter address</label>
+                <input id="address" name="address" type="text">
+            </div>
+            <div>
+                <label for="email">Enter email</label>
+                <input id="email" name="email" type="email">
+            </div>
+            <div>
+                <label for="password">Enter password</label>
+                <input id="password" name="password" type="text">
+            </div>
+            <div>
+                <button type="submit">Submit</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function sendData(e){
+            e.preventDefault();
+            const enteredFirstname = document.getElementById("firstname").value;
+            const enteredLastname = document.getElementById("lastname").value;
+            const enteredGender = document.getElementById("gender").value;
+            const enteredAddress = document.getElementById("address").value;
+            const enteredEmail = document.getElementById("email").value;
+            const enteredPassword = document.getElementById("password").value;
+            fetch("http://localhost:3000/registerUser", {
+                method:"POST",
+                body: JSON.stringify({
+                    firstname: enteredFirstname,
+                    lastname: enteredLastname,
+                    gender: enteredGender,
+                    address: enteredAddress,
+                    userpassword: enteredPassword
+                }),
+                headers:{
+                    "Content-type" : "application/json; charset=UTF-8",
+                },
+            })
+            .then((res) => res.json())
+            .then((data) => console.log("row added")); 
+        }
+    </script>
+</body>
+</html>

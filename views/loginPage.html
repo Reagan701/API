@@ -24,11 +24,11 @@
     </form>
 
     <script>
-        function sendData(e){
+        async function sendData(e){
             e.preventDefault();
             const enteredEmail = document.getElementById("email").value;
             const enteredPassword = document.getElementById("password").value;
-            fetch("http://localhost:3000/loginUser", {
+            let token = await fetch("http://localhost:3000/loginUser", {
                 method:"POST",
                 body: JSON.stringify({
                     email: enteredEmail,
@@ -37,9 +37,21 @@
                 headers:{
                     "Content-type" : "application/json; charset=UTF-8",
                 },
+            });
+
+            let data = await token.json()
+            
+            if(data){
+                let token = data.token
+                fetch('http://localhost:3000/verify', {
+                headers: {
+                    "Content-Type": "application/json",
+                    "x-auth-token": token
+                }
+            }).then((res) => res.json()).then((data) => {
+                console.log(data)
             })
-            .then((res) => res.json())
-            .then((data) => console.log(data.results));
+            }
         }
     </script>
 </body>

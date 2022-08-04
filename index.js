@@ -8,6 +8,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const app = express();
 const secret = process.env.secretKey;
+const auth = require('./auth');
 
 const router = express.Router();
 
@@ -55,16 +56,29 @@ router.get('/singleProduct', (req,res) =>{
 router.get('/login', (req,res) =>{
     res.sendFile('./views/loginPage.html', {root: __dirname});
 })
+router.get('/register', (req,res) =>{
+    res.sendFile('./views/registerPage.html', {root: __dirname});
+})
 
 router.post('/loginUser', bodyParser.json(), (req,res) =>{
     const query = `SELECT * FROM users WHERE email = ?`;
     database.query(query, [req.body.email], (err,result)=>{
         if(result.length >0){
             bcrypt.compare(req.body.userpassword, result[0].userpassword, (err,info) =>{
-                if(err) throw err;
                 if(info){
-                    const token = jwt.sign(JSON.stringify(result[0]),secret);
-                    res.send(token)
+                    const payload = {
+                        user: {
+                            id: result[0].id,
+                            firstname: result[0].firstname 
+                        }
+                    }
+                    jwt.sign(payload, process.env.secretKey, {
+                        expiresIn: '365d'
+                    }, 
+                    (err, token) => {
+                        if(err) throw err
+                        res.json({token})
+                    })
                 }else{
                     res.json({
                         results: "Password is incorrect"
@@ -87,4 +101,19 @@ router.get('/users', (req,res)=>{
             results:result
         })
     })
+})
+
+
+router.get('/verify', (req,res) =>{
+    const token = req.header("x-auth-token");
+
+    if(!token){
+        return res.status(400), res.send("400")
+    }
+
+    jwt.verify(token, process.env.secretKey, (err, decodedToken) => {
+
+        if (err) throw err
+        res.json({decodedToken})
+    });
 })
