@@ -9,6 +9,7 @@ const jwt = require('jsonwebtoken');
 const app = express();
 const secret = process.env.secretKey;
 const auth = require('./auth');
+const port = process.env.PORT || 3000
 
 const router = express.Router();
 
@@ -16,7 +17,7 @@ app.use(router, express.json(), express.urlencoded({
     extended: true
 }))
 
-app.listen(3000);
+app.listen(port);
 
 router.get('/', (req,res) =>{
     res.sendFile('./views/index.html', {root: __dirname});
