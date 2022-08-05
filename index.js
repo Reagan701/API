@@ -13,6 +13,11 @@ const port = process.env.PORT || 3000
 
 const router = express.Router();
 
+app.use((req,res,next)=>{
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    next();
+})
+
 app.use(router, express.json(), express.urlencoded({
     extended: true
 }))
