@@ -38,14 +38,32 @@ router.get('/allProducts', bodyParser.json(), async (req,res) =>{
 })
 
 router.post('/registerUser', bodyParser.json(), async (req,res) =>{
-    req.body.userpassword = await bcrypt.hash(req.body.userpassword,10);
 
-    const query = `INSERT INTO users(firstname, lastname, gender, address, email, userpassword)
-    VALUES(?,?,?,?,?,?)`
+    const check = `SELECT email FROM users WHERE ?`
 
-    database.query(query, [req.body.firstname, req.body.lastname, req.body.gender, req.body.address, req.body.email, req.body.userpassword], (err,results) =>{
+    let email = {
+        email: req.body.email
+    }
+
+    database.query(check, email, async (err,results) =>{
         if(err) throw err;
-        res.send(`row/s affected: ${results.affectedRows}`)
+        if(results.length >0){
+            res.json({
+                result: "Already a user"
+            });
+        }else{
+            req.body.userpassword = await bcrypt.hash(req.body.userpassword,10);
+
+            const query = `INSERT INTO users(firstname, lastname, gender, address, email, userpassword)
+            VALUES(?,?,?,?,?,?)`
+
+            database.query(query, [req.body.firstname, req.body.lastname, req.body.gender, req.body.address, req.body.email, req.body.userpassword], (err,results) =>{
+            if(err) throw err;
+            res.json({
+                result: results.affectedRows
+            })
+        })
+        }
     })
 })
 
